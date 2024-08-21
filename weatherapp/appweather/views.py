@@ -25,10 +25,16 @@ def index(request):
         weather_data = fetch_weather_and_forecast(city)
         print(weather_data,"***********************WeatherData******************************")
 
+        avg_temp = calculate_average_temperature()
+
         context = {
             "weather_data" : weather_data,
+            "avg_temp" : avg_temp
             # "daily_forecast" : daily_forecast
         }
+
+        
+
         return render(request,'appweather/index.html',context)
         # except Exception as e:
         #     print(e)
@@ -66,6 +72,7 @@ def fetch_weather_and_forecast(city):
             'city': city,
             'temperature': round(current_weather_response['main']['temp'] - 273.15,2),
             'humidity' : current_weather_response['main']['humidity'],
+            'wind' : round(current_weather_response['wind']['speed'] * 3.6,2),
             "description": current_weather_response['weather'][0]['description'],
             "icon" : current_weather_response['weather'][0]['icon']
         }
@@ -74,6 +81,7 @@ def fetch_weather_and_forecast(city):
             city= city,
             temperature= round(current_weather_response['main']['temp'] - 273.15, 2),
             humidity = current_weather_response['main']['humidity'],
+            wind = round(current_weather_response['wind']['speed'] * 3.6,2),
             description=current_weather_response['weather'][0]['description'],
             icon=current_weather_response['weather'][0]['icon'],
             
@@ -99,10 +107,10 @@ def calculate_average_temperature():
     now = datetime.now()
     one_day_ago = now - timedelta(days=1)
 
-    temperatures = WeatherData.objects.filter(created_at__range=[one_day_ago, now])
+    temperatures = WeatherData.objects.filter(timestamp__range=[one_day_ago, now])
 
     if temperatures.exists():
-        avg_temp = sum([t.temperature for t in temperatures]) / len(temperatures)
+        avg_temp = round(sum([t.temperature for t in temperatures]) / len(temperatures),2)
     else:
         avg_temp = 0  # Or another default value
 
@@ -116,3 +124,4 @@ def check_extreme_conditions(request):
         return HttpResponse("High temperature alert!")
     else:
         return HttpResponse("Normal temperature.")
+

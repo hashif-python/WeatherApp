@@ -1,28 +1,52 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
+    <link rel="stylesheet" href="{% static 'appweather/style.css' %}">
 </head>
 <body>
-    <form method="post">
-        {%csrf_token%}
-        <input type="text" name="city" placeholder="Enter your city..">
-        <button type="submit">Enter</button>
-    </form>
-
-    <div class="week">
-        {%if weather_data%}
-            <div class="city">
-                <h1>CITY : {{weather_data.city}} </h1>
-                <h2>Tempareture : {{weather_data.temperature}} </h2>
-                <h2>Humidity : {{weather_data.humidity}}</h2>
-                <p>Description : {{weather_data.description}}</p>
-                <img src="http://openweathermap.org/img/w/{{weather_data.icon}}">
-
+    <div class="card">
+        <form method="post">
+            <div class="search">
+                {%csrf_token%}
+                <input type="text" name="city" placeholder="Enter City name.." spellcheck="false">
+                <button type="submit">GO</button>
             </div>
-        {%endif%}
+        </form>
+        
+        <div class="weather">
+            {%if weather_data%}
+               <div class="dtemp">
+                <h1 class="temp">{{weather_data.temperature}}°C</h1>
+               </div>
+               <div class="dcity">
+                <h2 class="city">{{weather_data.city}}</h2>
+               </div>
+                
+                <div class="details">
+                    <div class="col">
+                        <div>
+                            <p class="humidity">{{weather_data.humidity}}</p>
+                            <p>Humidity</p>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div>
+                            <p class="wind">{{weather_data.wind}} km/h</p>
+                            <p>Wind Speed</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="avgtemp">
+                    <p>Average Temp: {{avg_temp}}</p>
+                </div>
+
+            {%endif%}
+        </div>
     </div>
 </body>
 </html>
