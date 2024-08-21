@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from datetime import datetime, timedelta
 from decouple import config
+from django.utils import timezone
 
 import requests
 import json
@@ -23,7 +24,15 @@ def index(request):
         # try:
 
         weather_data = fetch_weather_and_forecast(city)
-        print(weather_data,"***********************WeatherData******************************")
+        print(weather_data, "***********************WeatherData******************************")
+
+        if weather_data is None or 'error' in weather_data:
+            # If weather_data is None or contains an error message
+            error_message = "City not found or weather data is unavailable. Please try again."
+            context = {
+                "error_message": error_message
+            }
+            return render(request, 'appweather/index.html', context)
 
         avg_temp = calculate_average_temperature()
 
@@ -50,8 +59,8 @@ def fetch_weather_and_forecast(city):
         geo_response = requests.get(geo_code.format(city,1,API_KEY)).json()
         print(geo_response,"*******************GEO RESPONSE**************************")
 
-        if len(geo_response) == 0:
-            raise Exception("City not found or invalid API response")
+        if not geo_response:
+            return None
 
         lat = geo_response[0]['lat']
         lon = geo_response[0]['lon']
@@ -84,6 +93,7 @@ def fetch_weather_and_forecast(city):
             wind = round(current_weather_response['wind']['speed'] * 3.6,2),
             description=current_weather_response['weather'][0]['description'],
             icon=current_weather_response['weather'][0]['icon'],
+            timestamp=timezone.now()
             
         )
 

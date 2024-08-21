@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'appweather/style.css' %}">
+    
+
 </head>
 <body>
     <div class="card">
@@ -29,21 +32,32 @@
                 <div class="details">
                     <div class="col">
                         <div>
-                            <p class="humidity">{{weather_data.humidity}}</p>
+                            <p class="humidity">
+                                <i class="fas fa-tint"></i> {{ weather_data.humidity }}%
+                              </p>
+                              
                             <p>Humidity</p>
                         </div>
                     </div>
                     <div class="col">
                         <div>
-                            <p class="wind">{{weather_data.wind}} km/h</p>
+                            <p class="wind">
+                                <i class="fa-solid fa-wind"></i>{{weather_data.wind}} km/h
+                            </p>
                             <p>Wind Speed</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="avgtemp">
-                    <p>Average Temp: {{avg_temp}}</p>
+                    <p>Average Temp: {{avg_temp}}°C</p>
                 </div>
+
+            {%else%}
+
+            <div>
+                <p style="color:black; font-size:small">{{error_message}}</p>
+            </div>
 
             {%endif%}
         </div>
