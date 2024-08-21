@@ -22,11 +22,12 @@ def index(request):
 
         # try:
 
-        weather_data,daily_forecast = fetch_weather_and_forecast(city)
+        weather_data = fetch_weather_and_forecast(city)
+        print(weather_data,"***********************WeatherData******************************")
 
         context = {
             "weather_data" : weather_data,
-            "daily_forecast" : daily_forecast
+            # "daily_forecast" : daily_forecast
         }
         return render(request,'appweather/index.html',context)
         # except Exception as e:
@@ -41,7 +42,7 @@ def fetch_weather_and_forecast(city):
 
     try:
         geo_response = requests.get(geo_code.format(city,1,API_KEY)).json()
-        print(geo_response,"*********************************************")
+        print(geo_response,"*******************GEO RESPONSE**************************")
 
         if len(geo_response) == 0:
             raise Exception("City not found or invalid API response")
@@ -78,17 +79,17 @@ def fetch_weather_and_forecast(city):
             
         )
 
-        daily_forecast = []
-        for daily_data in forecast_response['daily'][:5]:
-            daily_forecast.append({
-                'day' : datetime.fromtimestamp(daily_data['dt']).strftime("%A"),
-                'min_temp' : round(daily_data['temp']['min'] - 273.15,2),
-                'max_temp' : round(daily_data['temp']['max'] - 273.15,2),
-                'humidity' : daily_data['humidity'],
-                'description' : daily_data['weather'][0]['description'],
-                'icon' : daily_data['weather'][0]['icon']
-            }) 
-        return weather_data,daily_forecast
+        # daily_forecast = []
+        # for daily_data in forecast_response['daily'][:5]:
+        #     daily_forecast.append({
+        #         'day' : datetime.fromtimestamp(daily_data['dt']).strftime("%A"),
+        #         'min_temp' : round(daily_data['temp']['min'] - 273.15,2),
+        #         'max_temp' : round(daily_data['temp']['max'] - 273.15,2),
+        #         'humidity' : daily_data['humidity'],
+        #         'description' : daily_data['weather'][0]['description'],
+        #         'icon' : daily_data['weather'][0]['icon']
+        #     }) 
+        return weather_data
     except Exception as e:
         print(e)
         raise

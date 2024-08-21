@@ -15,8 +15,12 @@
     <div class="week">
         {%if weather_data%}
             <div class="city">
-                <h1> {{weather_data.temparature}} </h1>
-                <h2> {{weather_data.icon}} </h2>
+                <h1>CITY : {{weather_data.city}} </h1>
+                <h2>Tempareture : {{weather_data.temperature}} </h2>
+                <h2>Humidity : {{weather_data.humidity}}</h2>
+                <p>Description : {{weather_data.description}}</p>
+                <img src="http://openweathermap.org/img/w/{{weather_data.icon}}">
+
             </div>
         {%endif%}
     </div>
