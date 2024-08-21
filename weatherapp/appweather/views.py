@@ -35,10 +35,13 @@ def index(request):
             return render(request, 'appweather/index.html', context)
 
         avg_temp = calculate_average_temperature()
+        
+        alert = check_extreme_conditions()
 
         context = {
             "weather_data" : weather_data,
-            "avg_temp" : avg_temp
+            "avg_temp" : avg_temp,
+            "alert" : alert
             # "daily_forecast" : daily_forecast
         }
 
@@ -114,7 +117,7 @@ def fetch_weather_and_forecast(city):
 
 
 def calculate_average_temperature():
-    now = datetime.now()
+    now = timezone.now()
     one_day_ago = now - timedelta(days=1)
 
     temperatures = WeatherData.objects.filter(timestamp__range=[one_day_ago, now])
@@ -128,10 +131,12 @@ def calculate_average_temperature():
 
 
 
-def check_extreme_conditions(request):
+def check_extreme_conditions():
     avg_temp = calculate_average_temperature()
-    if avg_temp > 30:  # Example threshold
+    if avg_temp > 30:
         return HttpResponse("High temperature alert!")
+    elif avg_temp < 15:
+        return HttpResponse("Low temperature alert.")
     else:
-        return HttpResponse("Normal temperature.")
+        return HttpResponse("Temperature is within a normal range.")
 
