@@ -71,19 +71,23 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var temperature = {{ weather_data.temperature|default:0 }};  // Use default value if temperature is not defined
+            var temperature = {{ weather_data.temperature|default:"null" }};  // Use "null" as default if temperature is not defined
+
+            if (temperature === null) {
+                return; // Do nothing if temperature is not defined
+            }
 
             if (temperature > 30) {
                 Swal.fire({
                     title: 'High Temperature Alert!',
-                    text: 'The temperature is above 30°C.Stay indoors!!',
+                    text: 'The temperature is above 30°C. Stay indoors!',
                     icon: 'warning',
                     confirmButtonText: 'OK'
                 });
             } else if (temperature < 19) {
                 Swal.fire({
                     title: 'Low Temperature Alert!',
-                    text: 'The temperature is below 19°C. Stay heated!!',
+                    text: 'The temperature is below 19°C. Stay heated!',
                     icon: 'warning',
                     confirmButtonText: 'OK'
                 });
@@ -97,5 +101,6 @@
             }
         });
     </script>
+
 </body>
 </html>

@@ -16,43 +16,41 @@ geo_code = 'http://api.openweathermap.org/geo/1.0/direct?q={}&limit={}&appid={}'
 current_weather = 'https://api.openweathermap.org/data/2.5/weather?lat={}&lon={}&appid={}'
 forecast = 'https://api.openweathermap.org/data/2.5/forecast/daily?lat={}&lon={}&cnt={}&appid={}'
 
+from django.shortcuts import render
+from django.http import HttpResponse
+
 def index(request):
-   
+    weather_data = None
+    avg_temp = None
+    error_message = None
+
     if request.method == "POST":
-        city = request.POST['city']
+        city = request.POST.get('city', '').strip()
 
-        # try:
+        if not city:
+            error_message = "Please enter a city name."
+        else:
+            try:
+                weather_data = fetch_weather_and_forecast(city)
+                if weather_data is None or 'error' in weather_data:
+                    error_message = "City not found or weather data is unavailable. Please try again."
+                else:
+                    avg_temp = calculate_average_temperature()
+            except Exception as e:
+                error_message = "An error occurred while fetching the data. Please try again later."
 
-        weather_data = fetch_weather_and_forecast(city)
-        print(weather_data, "***********************WeatherData******************************")
+    # Reset weather_data after POST or if it's a GET request
+    if request.method == "GET":
+        weather_data = None
 
-        if weather_data is None or 'error' in weather_data:
-            # If weather_data is None or contains an error message
-            error_message = "City not found or weather data is unavailable. Please try again."
-            context = {
-                "error_message": error_message
-            }
-            return render(request, 'appweather/index.html', context)
+    context = {
+        "weather_data": weather_data,
+        "avg_temp": avg_temp,
+        "error_message": error_message
+    }
+    return render(request, 'appweather/index.html', context)
 
-        avg_temp = calculate_average_temperature()
-        
-        alert = check_extreme_conditions()
 
-        context = {
-            "weather_data" : weather_data,
-            "avg_temp" : avg_temp,
-            "alert" : alert
-            # "daily_forecast" : daily_forecast
-        }
-
-        
-
-        return render(request,'appweather/index.html',context)
-        # except Exception as e:
-        #     print(e)
-            # return HttpResponse("An error occured while fetching the data, Please try after sometimes..")
-    else:
-        return render(request,'appweather/index.html')
     
 
 
